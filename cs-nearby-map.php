@@ -440,9 +440,33 @@ if(!class_exists('CspmNearbyMap')){
 		 *
 		 * @since 1.1
 		 */
-		function cspm_nearby_map_places_list(){
-			
-			$places_array = array(
+                function cspm_nearby_map_places_list(){
+
+                        /**
+                         * If the user defined custom places in the plugin options
+                         * we'll build the types list from that JSON instead of
+                         * using the default Google place types.
+                         */
+                        $custom_data = get_option('custom_nearby_locations', '');
+                        if ( ! empty( $custom_data ) ) {
+                                $locations = json_decode( $custom_data, true );
+                                if ( is_array( $locations ) ) {
+                                        $custom_types = array();
+                                        foreach ( $locations as $location ) {
+                                                if ( isset( $location['type'] ) && $location['type'] !== '' ) {
+                                                        $slug = sanitize_title( $location['type'] );
+                                                        if ( ! isset( $custom_types[ $slug ] ) ) {
+                                                                $custom_types[ $slug ] = ucwords( str_replace( '_', ' ', $location['type'] ) );
+                                                        }
+                                                }
+                                        }
+
+                                        if ( ! empty( $custom_types ) )
+                                                return $custom_types;
+                                }
+                        }
+
+                        $places_array = array(
 				'accounting' => esc_html__('Accounting', 'cs_nearby_map'),
 				'airport' => esc_html__('Airport', 'cs_nearby_map'),
 				'amusement_park' => esc_html__('Amusement park', 'cs_nearby_map'),
