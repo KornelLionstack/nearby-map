@@ -17,7 +17,9 @@ function initCustomNearbyMap() {
     });
 
     // Lekérjük a WP adminban megadott helyeket
-    fetch('/wp-admin/admin-ajax.php?action=get_custom_nearby_locations')
+    const ajaxUrl = ( typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.ajax_url ) ? cspm_nearby_map.ajax_url : '/wp-admin/admin-ajax.php';
+
+    fetch(ajaxUrl + '?action=get_custom_nearby_locations')
         .then(response => response.json())
         .then(data => {
             customLocations = Array.isArray(data) ? data : [];

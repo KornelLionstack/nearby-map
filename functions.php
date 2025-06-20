@@ -19,7 +19,7 @@ function return_custom_nearby_locations() {
  */
 function cspmnm_get_json_types() {
     $types = array();
-    $json  = get_option('custom_nearby_locations', '');
+    $json  = wp_unslash( get_option('custom_nearby_locations', '' ) );
 
     if ( ! empty( $json ) ) {
         $locations = json_decode( $json, true );
