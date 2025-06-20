@@ -4,6 +4,8 @@ let customLocations = [];
 function slugifyType(type) {
     return type
         .toLowerCase()
+        // Remove accents so "Kávézó" becomes "kavezo".
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .trim()
         .replace(/[\s-]+/g, '_')
         .replace(/[^a-z0-9_]/g, '')
@@ -17,7 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function initCustomNearbyMap() {
-    const mapElement = document.getElementById('map');
+    let mapElement = document.getElementById('map');
+    if (!mapElement) {
+        // Progress Map plugin uses containers like
+        // <div class="cspm_map_container"><div id="codespacing_progress_map_x"></div></div>
+        mapElement = document.querySelector('.cspm_map_container div[id^="codespacing_progress_map_"]');
+    }
     if (!mapElement) return;
 
     const map = new google.maps.Map(mapElement, {
