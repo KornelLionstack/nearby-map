@@ -11,3 +11,29 @@ function return_custom_nearby_locations() {
     echo $locations;
     wp_die();
 }
+
+/**
+ * Helper: parse custom nearby locations and extract unique place types.
+ *
+ * @return array Array of slug => label pairs for each custom type.
+ */
+function cspmnm_get_json_types() {
+    $types = array();
+    $json  = get_option('custom_nearby_locations', '');
+
+    if ( ! empty( $json ) ) {
+        $locations = json_decode( $json, true );
+        if ( is_array( $locations ) ) {
+            foreach ( $locations as $location ) {
+                if ( isset( $location['type'] ) && $location['type'] !== '' ) {
+                    $slug  = sanitize_title( $location['type'] );
+                    if ( ! isset( $types[ $slug ] ) ) {
+                        $types[ $slug ] = ucwords( str_replace( array( '_', '-' ), ' ', $location['type'] ) );
+                    }
+                }
+            }
+        }
+    }
+
+    return $types;
+}
