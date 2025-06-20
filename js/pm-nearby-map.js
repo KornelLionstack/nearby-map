@@ -1,4 +1,6 @@
 
+let customLocations = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof google !== 'undefined' && google.maps) {
         initCustomNearbyMap();
@@ -18,7 +20,10 @@ function initCustomNearbyMap() {
     fetch('/wp-admin/admin-ajax.php?action=get_custom_nearby_locations')
         .then(response => response.json())
         .then(data => {
-            data.forEach(place => {
+            customLocations = Array.isArray(data) ? data : [];
+            renderCustomTypeFilter(customLocations);
+
+            customLocations.forEach(place => {
                 if (!place.lat || !place.lng) return;
                 new google.maps.Marker({
                     position: { lat: parseFloat(place.lat), lng: parseFloat(place.lng) },
