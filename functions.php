@@ -26,6 +26,12 @@ function return_custom_nearby_locations() {
  */
 function cspmnm_slugify_type( $type ) {
     $type = strtolower( $type );
+
+    // Remove accents to match the JavaScript slugify implementation
+    if ( function_exists( 'remove_accents' ) ) {
+        $type = remove_accents( $type );
+    }
+
     $type = preg_replace( '/[\s-]+/', '_', $type );
     $type = preg_replace( '/[^a-z0-9_]/', '', $type );
     return trim( $type, '_' );
