@@ -38,12 +38,10 @@ function initCustomNearbyMap() {
 
 // Egyszerű példa ikon választásra type szerint
 function getIconByType(type) {
-    const icons = {
-        'bowling': 'https://maps.google.com/mapfiles/kml/shapes/sports.png',
-        'gym': 'https://maps.google.com/mapfiles/kml/shapes/library_maps.png',
-        'default': 'https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png'
-    };
-    return icons[type] || icons['default'];
+    if (typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url) {
+        return cspm_nearby_map.place_markers_file_url + type + '.png';
+    }
+    return null;
 }
 
 
