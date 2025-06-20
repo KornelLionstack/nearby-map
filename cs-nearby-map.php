@@ -363,8 +363,8 @@ if(!class_exists('CspmNearbyMap')){
 		 */		 
 		function cspm_register_scripts(){
 								
-			$min_path = $this->plugin_settings['combine_files'] == 'seperate' ? '' : 'min/';
-			$min_prefix = $this->plugin_settings['combine_files'] == 'seperate' ? '' : '.min' ;
+                        $min_path = '';
+                        $min_prefix = '';
 			
 			wp_register_script('cspm_simplelightbox_js', $this->plugin_url .'js/'.$min_path.'simple-lightbox.jquery'.$min_prefix.'.js', array( 'jquery' ), $this->plugin_version, true);
 			wp_register_script('jquery-readmore', $this->plugin_url .'js/'.$min_path.'readmore'.$min_prefix.'.js', array( 'jquery' ), $this->plugin_version, true);				
