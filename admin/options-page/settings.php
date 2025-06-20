@@ -393,24 +393,8 @@ if( !class_exists( 'CspmNearbyMapSettings' ) ){
 					)
 				);		
             
-                // Build list of place types. If custom locations are provided
-                // via the JSON option, use those types instead of the default
-                // Google Places list.
-                $custom_json     = get_option('custom_nearby_locations', '');
-                $custom_types    = array();
-                if ( ! empty( $custom_json ) ) {
-                    $locations = json_decode( $custom_json, true );
-                    if ( is_array( $locations ) ) {
-                        foreach ( $locations as $location ) {
-                            if ( isset( $location['type'] ) && $location['type'] !== '' ) {
-                                $slug = sanitize_title( $location['type'] );
-                                if ( ! isset( $custom_types[ $slug ] ) ) {
-                                    $custom_types[ $slug ] = ucwords( str_replace( '_', ' ', $location['type'] ) );
-                                }
-                            }
-                        }
-                    }
-                }
+                // Build list of place types from the custom JSON locations.
+                $custom_types = function_exists( 'cspmnm_get_json_types' ) ? cspmnm_get_json_types() : array();
 
                 // Default Google place types list
                 $default_types = array(

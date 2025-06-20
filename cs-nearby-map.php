@@ -452,25 +452,11 @@ if(!class_exists('CspmNearbyMap')){
                          * we'll build the types list from that JSON instead of
                          * using the default Google place types.
                          */
-                        $custom_data = get_option('custom_nearby_locations', '');
-                        if ( ! empty( $custom_data ) ) {
-                                $locations = json_decode( $custom_data, true );
-                                if ( is_array( $locations ) ) {
-                                        $custom_types = array();
-                                        foreach ( $locations as $location ) {
-                                                if ( isset( $location['type'] ) && $location['type'] !== '' ) {
-                                                        $slug = sanitize_title( $location['type'] );
-                                                        if ( ! isset( $custom_types[ $slug ] ) ) {
-                                                                $custom_types[ $slug ] = ucwords( str_replace( '_', ' ', $location['type'] ) );
-                                                        }
-                                                }
-                                        }
+                        $custom_types = function_exists( 'cspmnm_get_json_types' ) ? cspmnm_get_json_types() : array();
 
-                                        if ( ! empty( $custom_types ) ) {
-                                                $this->proximity = array_keys( $custom_types );
-                                                return $custom_types;
-                                        }
-                                }
+                        if ( ! empty( $custom_types ) ) {
+                                $this->proximity = array_keys( $custom_types );
+                                return $custom_types;
                         }
 
                         $places_array = array(
