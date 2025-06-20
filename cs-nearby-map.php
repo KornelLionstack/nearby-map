@@ -466,8 +466,10 @@ if(!class_exists('CspmNearbyMap')){
                                                 }
                                         }
 
-                                        if ( ! empty( $custom_types ) )
+                                        if ( ! empty( $custom_types ) ) {
+                                                $this->proximity = array_keys( $custom_types );
                                                 return $custom_types;
+                                        }
                                 }
                         }
 
