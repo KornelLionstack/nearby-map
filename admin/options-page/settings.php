@@ -651,10 +651,16 @@ add_action('admin_menu', function() {
 });
 
 function render_custom_nearby_locations_page() {
-    if (isset($_POST['save_custom_locations'])) {
-        $locations = sanitize_textarea_field($_POST['custom_locations_json']);
-        update_option('custom_nearby_locations', $locations);
-        echo '<div class="updated"><p>Helyek elmentve!</p></div>';
+    if ( isset( $_POST['save_custom_locations'] ) ) {
+        $raw_json = wp_unslash( $_POST['custom_locations_json'] );
+        $decoded  = json_decode( $raw_json, true );
+
+        if ( is_array( $decoded ) ) {
+            update_option( 'custom_nearby_locations', wp_json_encode( $decoded ) );
+            echo '<div class="updated"><p>Helyek elmentve!</p></div>';
+        } else {
+            echo '<div class="error"><p>Hibás JSON formátum!</p></div>';
+        }
     }
 
     $saved_locations = get_option('custom_nearby_locations', '[]');
