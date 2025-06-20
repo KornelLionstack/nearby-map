@@ -393,40 +393,27 @@ if( !class_exists( 'CspmNearbyMapSettings' ) ){
 					)
 				);		
             
-                $fields[] = array(
-                    'id' => 'proximity',				
-                    'name' => esc_attr__('Place Types', 'cs_nearby_map'),
-                    'type' => 'pw_multiselect',
-                    'desc' => __('Choose the place types & sort their order.<br>The plugin supports all the types in the Google Places API. 
-                        If you think that a type is missing, feel free to contact me in the support page.<br>
-                        Default to all places types.<br>                        
-                        Usage example:<code>[cs_nearby_map places="school,hospital"]</code><br> 
-                        You can override the list of selected place types in a shortcode using the attribute <code>places</code>. 
-                        <br /><u>Note:</u> below is the formatted names of all places that you can use in a shortcode.
-                        <br>A) accounting, airport, amusement_park, aquarium, art_gallery, atm
-                        <br>B) bakery, bank, bar, beauty_salon, bicycle_store, book_store, bowling_alley,bus_station
-                        <br>C) cafe, campground, car_dealer, car_rental, car_repair, car_wash,
-                        casino, cemetery, church, city_hall, clothing_store, convenience_store, courthouse
-                        <br>D) dentist, department_store, doctor
-                        <br>E) electrician, electronics_store, embassy, establishment
-                        <br>F) finance, fire_station, florist, food, funeral_home, furniture_store
-                        <br>G) gas_station, general_contractor, grocery_or_supermarket, gym
-                        <br>H) hair_care, hardware_store, health, hindu_temple, home_goods_store, hospital
-                        <br>I) insurance_agency
-                        <br>J) jewelry_store
-                        <br>L) laundry, lawyer, library, liquor_store, local_government_office, locksmith, lodging
-                        <br>M) meal_delivery, meal_takeaway, mosque, movie_rental, movie_theater, moving_company, museum
-                        <br>N) night_club
-                        <br>P) painter, park, parking, pet_store, pharmacy, physiotherapist, place_of_worship,
-                        plumber, police, post_office
-                        <br>R) real_estate_agency, restaurant, roofing_contractor, rv_park
-                        <br>S) school, shoe_store, shopping_mall, spa, stadium, storage, store,
-                        subway_station, synagogue
-                        <br>T) taxi_stand, train_station, travel_agency
-                        <br>U) university
-                        <br>V) veterinary_care
-                        <br>Z) zoo', 'cs_nearby_map'),
-                    'options' => array(
+                // Build list of place types. If custom locations are provided
+                // via the JSON option, use those types instead of the default
+                // Google Places list.
+                $custom_json     = get_option('custom_nearby_locations', '');
+                $custom_types    = array();
+                if ( ! empty( $custom_json ) ) {
+                    $locations = json_decode( $custom_json, true );
+                    if ( is_array( $locations ) ) {
+                        foreach ( $locations as $location ) {
+                            if ( isset( $location['type'] ) && $location['type'] !== '' ) {
+                                $slug = sanitize_title( $location['type'] );
+                                if ( ! isset( $custom_types[ $slug ] ) ) {
+                                    $custom_types[ $slug ] = ucwords( str_replace( '_', ' ', $location['type'] ) );
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Default Google place types list
+                $default_types = array(
                         'accounting' => 'Accounting',
                         'airport' => 'Airport',
                         'amusement_park' => 'Amusement park',
@@ -523,105 +510,19 @@ if( !class_exists( 'CspmNearbyMapSettings' ) ){
                         'university' => 'University',
                         'veterinary_care' => 'Veterinary care',
                         'zoo' => 'Zoo',
-                    ),
-                    'default' => array(
-                        'accounting',
-                        'airport',
-                        'amusement_park',
-                        'aquarium',
-                        'art_gallery',
-                        'atm',
-                        'bakery',
-                        'bank',
-                        'bar',
-                        'beauty_salon',
-                        'bicycle_store',
-                        'book_store',
-                        'bowling_alley',
-                        'bus_station',
-                        'cafe',
-                        'campground',
-                        'car_dealer',
-                        'car_rental',
-                        'car_repair',
-                        'car_wash',
-                        'casino',
-                        'cemetery',
-                        'church',
-                        'city_hall',
-                        'clothing_store',
-                        'convenience_store',
-                        'courthouse',
-                        'dentist',
-                        'department_store',
-                        'doctor',
-                        'electrician',
-                        'electronics_store',
-                        'embassy',
-                        //'establishment',
-                        //'finance',
-                        'fire_station',
-                        'florist',
-                        //'food',
-                        'funeral_home',
-                        'furniture_store',
-                        'gas_station',
-                        //'general_contractor',
-                        //'grocery_or_supermarket',
-                        'gym',
-                        'hair_care',
-                        'hardware_store',
-                        //'health',
-                        'hindu_temple',
-                        'home_goods_store',
-                        'hospital',
-                        'insurance_agency',
-                        'jewelry_store',
-                        'laundry',
-                        'lawyer',
-                        'library',
-                        'liquor_store',
-                        'local_government_office',
-                        'locksmith',
-                        'lodging',
-                        'meal_delivery',
-                        'meal_takeaway',
-                        'mosque',
-                        'movie_rental',
-                        'movie_theater',
-                        'moving_company',
-                        'museum',
-                        'night_club',
-                        'painter',
-                        'park',
-                        'parking',
-                        'pet_store',
-                        'pharmacy',
-                        'physiotherapist',
-                        //'place_of_worship',
-                        'plumber',
-                        'police',
-                        'post_office',
-                        'real_estate_agency',
-                        'restaurant',
-                        'roofing_contractor',
-                        'rv_park',
-                        'school',
-                        'shoe_store',
-                        'shopping_mall',
-                        'spa',
-                        'stadium',
-                        'storage',
-                        'store',
-                        'subway_station',
-                        'synagogue',
-                        'taxi_stand',
-                        'train_station',
-                        'travel_agency',
-                        'university',
-                        'veterinary_care',
-                        'zoo',
-                    ),				
+                );
+
+                // Use custom types if available
+                $proximity_options = ! empty( $custom_types ) ? $custom_types : $default_types;
+                $proximity_default = array_keys( $proximity_options );
+
+                $fields[] = array(
+                    'id' => 'proximity',
+                    'name' => esc_attr__('Place Types', 'cs_nearby_map'),
+                    'type' => 'pw_multiselect',
+                    'desc' => __('Choose the place types & sort their order.<br>The plugin supports all the types in the Google Places API.', 'cs_nearby_map'),
+                    'options' => $proximity_options,
+                    'default' => $proximity_default,
                     'attributes' => array(
                         'placeholder' => 'Select the points of interest',
                     )
