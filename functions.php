@@ -17,6 +17,20 @@ function return_custom_nearby_locations() {
  *
  * @return array Array of slug => label pairs for each custom type.
  */
+/**
+ * Convert a place type label into a slug that matches
+ * the icon file naming convention.
+ *
+ * @param string $type Raw type label from JSON.
+ * @return string Sanitized slug using underscores as separators.
+ */
+function cspmnm_slugify_type( $type ) {
+    $type = strtolower( $type );
+    $type = preg_replace( '/[\s-]+/', '_', $type );
+    $type = preg_replace( '/[^a-z0-9_]/', '', $type );
+    return trim( $type, '_' );
+}
+
 function cspmnm_get_json_types() {
     $types = array();
     $json  = wp_unslash( get_option('custom_nearby_locations', '' ) );
@@ -26,7 +40,7 @@ function cspmnm_get_json_types() {
         if ( is_array( $locations ) ) {
             foreach ( $locations as $location ) {
                 if ( isset( $location['type'] ) && $location['type'] !== '' ) {
-                    $slug  = sanitize_title( $location['type'] );
+                    $slug  = cspmnm_slugify_type( $location['type'] );
                     if ( ! isset( $types[ $slug ] ) ) {
                         $types[ $slug ] = ucwords( str_replace( array( '_', '-' ), ' ', $location['type'] ) );
                     }

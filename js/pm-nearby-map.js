@@ -1,6 +1,15 @@
 
 let customLocations = [];
 
+function slugifyType(type) {
+    return type
+        .toLowerCase()
+        .trim()
+        .replace(/[\s-]+/g, '_')
+        .replace(/[^a-z0-9_]/g, '')
+        .replace(/^_+|_+$/g, '');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof google !== 'undefined' && google.maps) {
         initCustomNearbyMap();
@@ -22,7 +31,9 @@ function initCustomNearbyMap() {
     fetch(ajaxUrl + '?action=get_custom_nearby_locations')
         .then(response => response.json())
         .then(data => {
-            customLocations = Array.isArray(data) ? data : [];
+            customLocations = Array.isArray(data)
+                ? data.map(p => Object.assign({}, p, { slug: slugifyType(p.type || '') }))
+                : [];
             renderCustomTypeFilter(customLocations);
 
             customLocations.forEach(place => {
@@ -31,17 +42,17 @@ function initCustomNearbyMap() {
                     position: { lat: parseFloat(place.lat), lng: parseFloat(place.lng) },
                     map: map,
                     title: place.name || 'Hely',
-                    icon: getIconByType(place.type)
+                    icon: getIconByType(place.slug)
                 });
             });
         })
         .catch(error => console.error('Hiba a helyek betöltésekor:', error));
 }
 
-// Egyszerű példa ikon választásra type szerint
-function getIconByType(type) {
+// Egyszerű példa ikon választásra a type slug alapján
+function getIconByType(slug) {
     if (typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url) {
-        return cspm_nearby_map.place_markers_file_url + type + '.png';
+        return cspm_nearby_map.place_markers_file_url + slug + '.png';
     }
     return null;
 }
@@ -51,11 +62,13 @@ function getIconByType(type) {
 // === CUSTOM TYPE FILTER (ONLY FROM JSON) ===
 
 function getCustomTypesFromJSON(locations) {
-    const types = new Set();
+    const types = new Map();
     locations.forEach(loc => {
-        if (loc.type) types.add(loc.type);
+        if (loc.slug && loc.type && !types.has(loc.slug)) {
+            types.set(loc.slug, loc.type);
+        }
     });
-    return Array.from(types);
+    return types;
 }
 
 // Feltételezzük, hogy `customLocations` globálisan elérhető (betöltve már)
@@ -66,8 +79,8 @@ function renderCustomTypeFilter(locations) {
     const types = getCustomTypesFromJSON(locations);
 
     let html = '<select id="custom-type-selector"><option value="">– Összes típus –</option>';
-    types.forEach(type => {
-        html += `<option value="${type}">${type}</option>`;
+    types.forEach((label, slug) => {
+        html += `<option value="${slug}">${label}</option>`;
     });
     html += '</select>';
 
@@ -79,16 +92,16 @@ function renderCustomTypeFilter(locations) {
     });
 }
 
-function showFilteredLocations(type) {
+function showFilteredLocations(typeSlug) {
     const mapContainer = document.querySelector('#cspm-map');
     if (!mapContainer || typeof customLocations === "undefined") return;
 
-    const markers = type ? customLocations.filter(loc => loc.type === type) : customLocations;
+    const markers = typeSlug ? customLocations.filter(loc => loc.slug === typeSlug) : customLocations;
 
     // töröljük az előzőket (feltételezzük, hogy a `cspm_markers` globális)
     cspm_clearAllMarkers();
 
     markers.forEach(loc => {
-        cspm_addMarker(loc.lat, loc.lng, loc.name, loc.type);
+        cspm_addMarker(loc.lat, loc.lng, loc.name, loc.slug);
     });
 }
