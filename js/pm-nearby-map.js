@@ -32,7 +32,16 @@ function slugifyType(type) {
         .replace(/^_+|_+$/g, '');
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+
+function onReady(callback) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', callback);
+    } else {
+        callback();
+    }
+}
+
+onReady(function () {
     if (typeof google !== 'undefined' && google.maps) {
         initCustomNearbyMap();
     }
