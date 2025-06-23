@@ -58,7 +58,16 @@ function initCustomNearbyMap() {
 
 // Egyszerű példa ikon választásra a type slug alapján
 const typeAliases = {
-    bowling: 'bowling_alley'
+    bowling: 'bowling_alley',
+    bevasarlas_es_kiskereskedelem: 'shopping_mall',
+    kozlekedes: 'bus_station',
+    egeszsegugyi_letesitmenyek: 'hospital',
+    oktatasi_intezmenyek: 'school',
+    jszakai_let__klub: 'night_club',
+    sport_es_rekreacio: 'stadium',
+    ttermek: 'restaurant',
+    kulturalis_helyszinek: 'museum',
+    kavezok: 'cafe'
 };
 
 function getIconByType(slug) {
