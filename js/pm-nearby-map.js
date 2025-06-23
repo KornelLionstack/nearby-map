@@ -75,6 +75,7 @@ function initCustomNearbyMap() {
     fetch(ajaxUrl + '?action=get_custom_nearby_locations')
         .then(response => response.json())
         .then(data => {
+            console.log('Loaded locations from JSON:', data);
             customLocations = Array.isArray(data)
                 ? data.map(p => Object.assign({}, p, { slug: slugifyType(p.type || '') }))
                 : [];
@@ -167,6 +168,9 @@ function bindCategoryHover() {
         });
         cat.addEventListener('mouseleave', () => {
             showFilteredLocations('');
+        });
+        cat.addEventListener('click', () => {
+            showFilteredLocations(slug);
         });
     });
 }
