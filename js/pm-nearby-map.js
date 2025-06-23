@@ -57,9 +57,14 @@ function initCustomNearbyMap() {
 }
 
 // Egyszerű példa ikon választásra a type slug alapján
+const typeAliases = {
+    bowling: 'bowling_alley'
+};
+
 function getIconByType(slug) {
     if (typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url) {
-        return cspm_nearby_map.place_markers_file_url + slug + '.png';
+        const mapped = typeAliases[slug] || slug;
+        return cspm_nearby_map.place_markers_file_url + mapped + '.png';
     }
     return null;
 }
