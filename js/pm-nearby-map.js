@@ -1,6 +1,26 @@
 
 let customLocations = [];
 
+let customMap;
+let customMarkers = [];
+
+function addCustomMarker(lat, lng, title, slug) {
+    if (!customMap) return;
+    const marker = new google.maps.Marker({
+        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        map: customMap,
+        title: title || "",
+        icon: getIconByType(slug)
+    });
+    customMarkers.push(marker);
+    return marker;
+}
+
+function clearCustomMarkers() {
+    customMarkers.forEach(m => m.setMap(null));
+    customMarkers = [];
+}
+
 function slugifyType(type) {
     return type
         .toLowerCase()
@@ -31,6 +51,7 @@ function initCustomNearbyMap() {
         center: { lat: 47.4979, lng: 19.0402 }, // Budapest default
         zoom: 13
     });
+    customMap = map;
 
     // Lekérjük a WP adminban megadott helyeket
     const ajaxUrl = ( typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.ajax_url ) ? cspm_nearby_map.ajax_url : '/wp-admin/admin-ajax.php';
@@ -45,12 +66,7 @@ function initCustomNearbyMap() {
 
             customLocations.forEach(place => {
                 if (!place.lat || !place.lng) return;
-                new google.maps.Marker({
-                    position: { lat: parseFloat(place.lat), lng: parseFloat(place.lng) },
-                    map: map,
-                    title: place.name || 'Hely',
-                    icon: getIconByType(place.slug)
-                });
+                addCustomMarker(place.lat, place.lng, place.name || "Hely", place.slug);
             });
         })
         .catch(error => console.error('Hiba a helyek betöltésekor:', error));
@@ -114,15 +130,13 @@ function renderCustomTypeFilter(locations) {
 }
 
 function showFilteredLocations(typeSlug) {
-    const mapContainer = document.querySelector('#cspm-map');
-    if (!mapContainer || typeof customLocations === "undefined") return;
 
     const markers = typeSlug ? customLocations.filter(loc => loc.slug === typeSlug) : customLocations;
 
     // töröljük az előzőket (feltételezzük, hogy a `cspm_markers` globális)
-    cspm_clearAllMarkers();
+    clearCustomMarkers();
 
     markers.forEach(loc => {
-        cspm_addMarker(loc.lat, loc.lng, loc.name, loc.slug);
+        addCustomMarker(loc.lat, loc.lng, loc.name, loc.slug);
     });
 }
