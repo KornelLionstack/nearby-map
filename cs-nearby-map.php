@@ -1279,7 +1279,9 @@ if(!class_exists('CspmNearbyMap')){
 				nearby_map_object[map_id] = plugin_map.gmap3("get");					
 				origin[map_id] = new google.maps.LatLng(<?php echo $centerLat; ?>, <?php echo $centerLng; ?>);											
 				
-				cspm_init_nearby_directions_display(map_id);											
+                                if (typeof cspm_init_nearby_directions_display === 'function') {
+                                    cspm_init_nearby_directions_display(map_id);
+                                }
 				
 				<?php 
 				
