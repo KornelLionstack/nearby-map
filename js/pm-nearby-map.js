@@ -1,4 +1,11 @@
 
+// Ensure globals provided by the Progress Map plugin exist so that
+// the script doesn't raise "nearby_map is not defined" errors when the
+// extension runs on its own.
+window.nearby_map = window.nearby_map || {};
+window.nearby_map_object = window.nearby_map_object || {};
+window.origin = window.origin || {};
+
 let customLocations = [];
 
 let customMap;
