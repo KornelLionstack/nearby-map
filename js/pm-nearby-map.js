@@ -28,6 +28,34 @@ function clearCustomMarkers() {
     customMarkers = [];
 }
 
+function loadNearbyLocations(typeSlug) {
+    const ajaxUrl = ( typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.ajax_url )
+        ? cspm_nearby_map.ajax_url
+        : '/wp-admin/admin-ajax.php';
+
+    fetch(ajaxUrl + '?action=get_custom_nearby_locations')
+        .then(response => response.json())
+        .then(locations => {
+            const filtered = typeSlug
+                ? locations.filter(place => slugifyType(place.type) === typeSlug)
+                : locations;
+
+            clearCustomMarkers();
+
+            filtered.forEach(place => {
+                if (!place.lat || !place.lng) return;
+                new google.maps.Marker({
+                    position: { lat: place.lat, lng: place.lng },
+                    map: customMap,
+                    title: place.name
+                });
+            });
+        })
+        .catch(err => {
+            console.error('Helyek betöltése sikertelen:', err);
+        });
+}
+
 function slugifyType(type) {
     return type
         .toLowerCase()
@@ -143,7 +171,7 @@ function renderCustomTypeFilter(locations) {
 
     document.querySelector('#custom-type-selector').addEventListener('change', function () {
         const selected = this.value;
-        showFilteredLocations(selected);
+        loadNearbyLocations(selected);
     });
 }
 
@@ -164,13 +192,13 @@ function bindCategoryHover() {
     cats.forEach(cat => {
         const slug = slugifyType(cat.getAttribute('id') || cat.dataset.proximityName || '');
         cat.addEventListener('mouseenter', () => {
-            showFilteredLocations(slug);
+            loadNearbyLocations(slug);
         });
         cat.addEventListener('mouseleave', () => {
-            showFilteredLocations('');
+            loadNearbyLocations('');
         });
         cat.addEventListener('click', () => {
-            showFilteredLocations(slug);
+            loadNearbyLocations(slug);
         });
     });
 }
