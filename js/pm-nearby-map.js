@@ -79,6 +79,7 @@ function initCustomNearbyMap() {
                 ? data.map(p => Object.assign({}, p, { slug: slugifyType(p.type || '') }))
                 : [];
             renderCustomTypeFilter(customLocations);
+            bindCategoryHover();
 
             customLocations.forEach(place => {
                 if (!place.lat || !place.lng) return;
@@ -154,5 +155,18 @@ function showFilteredLocations(typeSlug) {
 
     markers.forEach(loc => {
         addCustomMarker(loc.lat, loc.lng, loc.name, loc.slug);
+    });
+}
+
+function bindCategoryHover() {
+    const cats = document.querySelectorAll('.cspm_nearby_cat_holder');
+    cats.forEach(cat => {
+        const slug = slugifyType(cat.getAttribute('id') || cat.dataset.proximityName || '');
+        cat.addEventListener('mouseenter', () => {
+            showFilteredLocations(slug);
+        });
+        cat.addEventListener('mouseleave', () => {
+            showFilteredLocations('');
+        });
     });
 }
