@@ -656,10 +656,9 @@ function render_custom_nearby_locations_page() {
         $decoded  = json_decode( $raw_json, true );
 
         if ( is_array( $decoded ) ) {
-            // Preserve UTF-8 characters so accents don't get converted to
-            // \uXXXX sequences when saving the JSON string.
-            $encoded = wp_json_encode( $decoded, JSON_UNESCAPED_UNICODE );
-            update_option( 'custom_nearby_locations', $encoded );
+            // Save the raw JSON exactly as provided so the admin can
+            // control formatting and ordering.
+            update_option( 'custom_nearby_locations', $raw_json );
             echo '<div class="updated"><p>Helyek elmentve!</p></div>';
         } else {
             echo '<div class="error"><p>Hibás JSON formátum!</p></div>';
