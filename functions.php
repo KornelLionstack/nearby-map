@@ -57,3 +57,15 @@ function cspmnm_get_json_types() {
 
     return $types;
 }
+
+// Filter Progress Map image paths to use this plugin's icons
+add_filter('csnm_img_file', 'cspmnm_custom_img_file');
+add_filter('csnm_place_markers_file', 'cspmnm_custom_marker_path');
+
+function cspmnm_custom_img_file( $default_url ) {
+    return plugin_dir_url( __FILE__ ) . 'img/';
+}
+
+function cspmnm_custom_marker_path( $default_url ) {
+    return plugin_dir_url( __FILE__ ) . 'img/place_types_markers/';
+}
