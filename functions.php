@@ -69,3 +69,12 @@ function cspmnm_custom_img_file( $default_url ) {
 function cspmnm_custom_marker_path( $default_url ) {
     return plugin_dir_url( __FILE__ ) . 'img/place_types_markers/';
 }
+
+// Load Google Maps API asynchronously for better performance
+add_filter( 'script_loader_tag', 'cspmnm_async_google_maps', 10, 2 );
+function cspmnm_async_google_maps( $tag, $handle ) {
+    if ( strpos( $tag, 'maps.googleapis.com/maps/api/js' ) !== false ) {
+        $tag = str_replace( '<script ', '<script async ', $tag );
+    }
+    return $tag;
+}
