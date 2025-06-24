@@ -44,11 +44,12 @@ function loadNearbyLocations(typeSlug) {
 
             filtered.forEach(place => {
                 if (!place.lat || !place.lng) return;
-                new google.maps.Marker({
-                    position: { lat: place.lat, lng: place.lng },
-                    map: customMap,
-                    title: place.name
-                });
+                addCustomMarker(
+                    parseFloat(place.lat),
+                    parseFloat(place.lng),
+                    place.name || "",
+                    slugifyType(place.type || "")
+                );
             });
         })
         .catch(err => {
