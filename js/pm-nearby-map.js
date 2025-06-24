@@ -18,7 +18,13 @@ function addCustomMarker(lat, lng, title, slug) {
     if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
         const opts = { map: customMap, position: pos, title: title || "" };
         const iconUrl = getIconByType(slug);
-        if (iconUrl) opts.gmpIcon = iconUrl;
+        if (iconUrl) {
+            const img = document.createElement('img');
+            img.src = iconUrl;
+            img.width = 24;
+            img.height = 24;
+            opts.content = img;
+        }
         marker = new google.maps.marker.AdvancedMarkerElement(opts);
     } else {
         marker = new google.maps.Marker({
