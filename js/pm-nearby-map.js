@@ -156,8 +156,11 @@ const typeAliases = {
     egeszsegugyi_letesitmenyek: 'hospital',
     oktatasi_intezmenyek: 'school',
     jszakai_let__klub: 'night_club',
+    ejszakai_elet__klub: 'night_club',
     sport_es_rekreacio: 'stadium',
     ttermek: 'restaurant',
+    ettermek: 'restaurant',
+    mozi: 'movie_theater',
     kulturalis_helyszinek: 'museum',
     kavezok: 'cafe'
 };
