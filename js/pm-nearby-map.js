@@ -8,7 +8,8 @@ window.nearby_map_object = window.nearby_map_object || {};
 window.origin = window.origin || {};
 
 document.addEventListener('DOMContentLoaded', function () {
-    const buttons = document.querySelectorAll('.proximity_place_nearby_map_453');
+    // Find all proximity buttons regardless of the map id
+    const buttons = document.querySelectorAll('[class*="proximity_place_"]');
 
     const ajaxUrl = typeof ajaxurl !== 'undefined'
         ? ajaxurl
