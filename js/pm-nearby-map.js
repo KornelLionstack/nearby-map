@@ -73,7 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         locations.forEach(loc => {
             const icon = markerBase
-                ? markerBase + slugify(loc.type) + '.png'
+                ? {
+                    url: markerBase + slugify(loc.type) + '.svg',
+                    scaledSize: new google.maps.Size(40, 40)
+                }
                 : null;
             new google.maps.Marker({
                 position: { lat: loc.lat, lng: loc.lng },
