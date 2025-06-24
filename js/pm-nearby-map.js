@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const mapElement = document.getElementById(elementId);
         if (!mapElement) return console.error(`Nem található a térkép elem: ${elementId}`);
 
-        const lat = parseFloat(mapElement.dataset.lat || 47.475);
-        const lng = parseFloat(mapElement.dataset.lng || 19.04);
+        const lat = parseFloat(mapElement.dataset.lat || 47.4555962);
+        const lng = parseFloat(mapElement.dataset.lng || 19.0435047);
         const zoom = parseInt(mapElement.dataset.zoom || 13);
 
         const map = new google.maps.Map(mapElement, {
