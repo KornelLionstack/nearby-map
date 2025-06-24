@@ -96,19 +96,40 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             marker.addListener('click', () => {
-                infoWindow.setContent(`<strong>${loc.name}</strong>`);
-                infoWindow.open(map, marker);
+                const travelModes = [
+                    { mode: google.maps.TravelMode.DRIVING, label: 'Autóval' },
+                    { mode: google.maps.TravelMode.WALKING, label: 'Gyalog' },
+                    { mode: google.maps.TravelMode.TRANSIT, label: 'Tömegközlekedéssel' }
+                ];
 
-                directionsService.route({
-                    origin: window.nearby_origins[mapId],
-                    destination: { lat: loc.lat, lng: loc.lng },
-                    travelMode: google.maps.TravelMode.DRIVING
-                }, (result, status) => {
-                    if (status === 'OK') {
-                        directionsRenderer.setDirections(result);
-                    } else {
-                        console.error('Directions request failed due to ' + status);
-                    }
+                Promise.all(travelModes.map(({ mode, label }) => {
+                    return new Promise(resolve => {
+                        directionsService.route({
+                            origin: window.nearby_origins[mapId],
+                            destination: { lat: loc.lat, lng: loc.lng },
+                            travelMode: mode
+                        }, (result, status) => {
+                            if (status === 'OK') {
+                                // Render the first successful mode on the map
+                                if (!directionsRenderer.getDirections()) {
+                                    directionsRenderer.setDirections(result);
+                                }
+                                const leg = result.routes[0].legs[0];
+                                resolve({ label, distance: leg.distance.text, duration: leg.duration.text });
+                            } else {
+                                resolve(null);
+                            }
+                        });
+                    });
+                })).then(results => {
+                    const listItems = results.filter(Boolean).map(r =>
+                        `<li>${r.label}: ${r.duration} (${r.distance})</li>`
+                    ).join('');
+
+                    infoWindow.setContent(
+                        `<strong>${loc.name}</strong><ul>${listItems}</ul>`
+                    );
+                    infoWindow.open(map, marker);
                 });
             });
         });
