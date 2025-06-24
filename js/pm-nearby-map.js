@@ -76,10 +76,18 @@ function onReady(callback) {
     }
 }
 
-onReady(function () {
+function waitForGoogleMaps(callback, attempts = 20) {
     if (typeof google !== 'undefined' && google.maps) {
-        initCustomNearbyMap();
+        callback();
+    } else if (attempts > 0) {
+        setTimeout(function () {
+            waitForGoogleMaps(callback, attempts - 1);
+        }, 500);
     }
+}
+
+onReady(function () {
+    waitForGoogleMaps(initCustomNearbyMap);
 });
 
 function initCustomNearbyMap() {
