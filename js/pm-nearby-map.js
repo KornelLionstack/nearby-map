@@ -46,8 +46,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function displayMarkersOnMap(locations, mapId) {
-        const mapElement = document.getElementById(mapId);
-        if (!mapElement) return console.error(`Nem található a térkép elem: ${mapId}`);
+        const elementId = 'codespacing_progress_map_' + mapId;
+        const mapElement = document.getElementById(elementId);
+        if (!mapElement) return console.error(`Nem található a térkép elem: ${elementId}`);
 
         const lat = parseFloat(mapElement.dataset.lat || 47.475);
         const lng = parseFloat(mapElement.dataset.lng || 19.04);
