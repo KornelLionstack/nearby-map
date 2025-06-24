@@ -65,6 +65,14 @@ document.addEventListener('DOMContentLoaded', function () {
         window.nearby_map_object[mapId] = map;
         window.origin[mapId] = new google.maps.LatLng(lat, lng);
 
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer({
+            suppressMarkers: true
+        });
+        directionsRenderer.setMap(map);
+
+        const infoWindow = new google.maps.InfoWindow();
+
         const markerBase =
             typeof cspm_nearby_map !== 'undefined' &&
             cspm_nearby_map.place_markers_file_url
@@ -78,11 +86,28 @@ document.addEventListener('DOMContentLoaded', function () {
                     scaledSize: new google.maps.Size(40, 40)
                 }
                 : null;
-            new google.maps.Marker({
+            const marker = new google.maps.Marker({
                 position: { lat: loc.lat, lng: loc.lng },
                 map: map,
                 title: loc.name,
                 ...(icon ? { icon } : {})
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.setContent(`<strong>${loc.name}</strong>`);
+                infoWindow.open(map, marker);
+
+                directionsService.route({
+                    origin: window.origin[mapId],
+                    destination: { lat: loc.lat, lng: loc.lng },
+                    travelMode: google.maps.TravelMode.DRIVING
+                }, (result, status) => {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(result);
+                    } else {
+                        console.error('Directions request failed due to ' + status);
+                    }
+                });
             });
         });
     }
