@@ -13,18 +13,33 @@ let customMarkers = [];
 
 function addCustomMarker(lat, lng, title, slug) {
     if (!customMap) return;
-    const marker = new google.maps.Marker({
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        map: customMap,
-        title: title || "",
-        icon: getIconByType(slug)
-    });
+    const pos = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    let marker;
+    if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
+        const opts = { map: customMap, position: pos, title: title || "" };
+        const iconUrl = getIconByType(slug);
+        if (iconUrl) opts.gmpIcon = iconUrl;
+        marker = new google.maps.marker.AdvancedMarkerElement(opts);
+    } else {
+        marker = new google.maps.Marker({
+            position: pos,
+            map: customMap,
+            title: title || "",
+            icon: getIconByType(slug)
+        });
+    }
     customMarkers.push(marker);
     return marker;
 }
 
 function clearCustomMarkers() {
-    customMarkers.forEach(m => m.setMap(null));
+    customMarkers.forEach(m => {
+        if (typeof m.setMap === 'function') {
+            m.setMap(null);
+        } else {
+            m.map = null;
+        }
+    });
     customMarkers = [];
 }
 
