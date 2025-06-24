@@ -71,10 +71,10 @@ function cspmnm_custom_marker_path( $default_url ) {
 }
 
 // Load Google Maps API asynchronously for better performance
-add_filter( 'script_loader_tag', 'cspmnm_async_google_maps', 10, 2 );
-function cspmnm_async_google_maps( $tag, $handle ) {
+add_filter( 'script_loader_tag', 'cspmnm_defer_google_maps', 10, 2 );
+function cspmnm_defer_google_maps( $tag, $handle ) {
     if ( strpos( $tag, 'maps.googleapis.com/maps/api/js' ) !== false ) {
-        $tag = str_replace( '<script ', '<script async ', $tag );
+        $tag = str_replace( '<script ', '<script defer ', $tag );
     }
     return $tag;
 }
