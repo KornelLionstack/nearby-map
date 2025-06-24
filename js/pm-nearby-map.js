@@ -65,11 +65,21 @@ document.addEventListener('DOMContentLoaded', function () {
         window.nearby_map_object[mapId] = map;
         window.origin[mapId] = new google.maps.LatLng(lat, lng);
 
+        const markerBase =
+            typeof cspm_nearby_map !== 'undefined' &&
+            cspm_nearby_map.place_markers_file_url
+                ? cspm_nearby_map.place_markers_file_url
+                : '';
+
         locations.forEach(loc => {
+            const icon = markerBase
+                ? markerBase + slugify(loc.type) + '.png'
+                : null;
             new google.maps.Marker({
                 position: { lat: loc.lat, lng: loc.lng },
                 map: map,
-                title: loc.name
+                title: loc.name,
+                ...(icon ? { icon } : {})
             });
         });
     }
