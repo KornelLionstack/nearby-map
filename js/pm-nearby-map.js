@@ -202,3 +202,17 @@ function bindCategoryHover() {
         });
     });
 }
+
+/**
+ * Override the Progress Map function that normally queries the
+ * Google Places API for nearby locations of a given type. Instead
+ * of performing the remote request we simply filter the custom JSON
+ * locations already loaded on the map.
+ *
+ * This keeps the original API signature so calls from the base
+ * plugin continue to work without modification.
+ */
+function cspm_nearby_locations(map_id, type, selected_system_unit, radius, rankby, keyword) {
+    const slug = slugifyType(type || '');
+    loadNearbyLocations(slug);
+}
