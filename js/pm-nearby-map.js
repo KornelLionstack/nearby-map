@@ -5,7 +5,9 @@
  */
 window.nearby_map = window.nearby_map || {};
 window.nearby_map_object = window.nearby_map_object || {};
-window.origin = window.origin || {};
+// Avoid clobbering the built-in "origin" property on the window object.
+// Store origin coordinates in a custom global instead.
+window.nearby_origins = window.nearby_origins || {};
 
 document.addEventListener('DOMContentLoaded', function () {
     // Find all proximity buttons regardless of the map id
@@ -63,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // expose the created map for inline scripts that expect these globals
         window.nearby_map[mapId] = map;
         window.nearby_map_object[mapId] = map;
-        window.origin[mapId] = new google.maps.LatLng(lat, lng);
+        window.nearby_origins[mapId] = new google.maps.LatLng(lat, lng);
 
         const directionsService = new google.maps.DirectionsService();
         const directionsRenderer = new google.maps.DirectionsRenderer({
@@ -98,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 infoWindow.open(map, marker);
 
                 directionsService.route({
-                    origin: window.origin[mapId],
+                    origin: window.nearby_origins[mapId],
                     destination: { lat: loc.lat, lng: loc.lng },
                     travelMode: google.maps.TravelMode.DRIVING
                 }, (result, status) => {
