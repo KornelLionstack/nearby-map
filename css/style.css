@@ -1180,10 +1180,11 @@ div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
 }
 
 /* Style for the Google Maps link button in info windows */
-.cspm-gmaps-button {
+.cspm-gmaps-button,
+.cspm-gmaps-button:visited {
         display: inline-block;
         background: #302c2c;
-        color: #fff !important;
+        color: #808080 !important;
         padding: 6px 12px;
         margin-top: 5px;
         border-radius: 4px;
@@ -1192,7 +1193,7 @@ div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
 
 .cspm-gmaps-button:hover {
         background: #262323;
-        color: #fff !important;
+        color: #808080 !important;
 }
 
 /* Show category name on hover next to icon */
