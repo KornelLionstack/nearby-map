@@ -38,6 +38,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Display a marker at the map's center/origin once the map is fully loaded
+    window.addEventListener('load', function () {
+        if (typeof nearby_map_object !== 'undefined' && typeof nearby_origins !== 'undefined') {
+            Object.keys(nearby_map_object).forEach(function (mapId) {
+                const map = nearby_map_object[mapId];
+                const origin = nearby_origins[mapId];
+                if (map && origin) {
+                    const iconUrl =
+                        typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.geoloc_marker_url
+                            ? cspm_nearby_map.geoloc_marker_url
+                            : null;
+
+                    const markerOpts = { position: origin, map: map };
+                    if (iconUrl) {
+                        markerOpts.icon = { url: iconUrl, scaledSize: new google.maps.Size(40, 40) };
+                    }
+
+                    new google.maps.Marker(markerOpts);
+                }
+            });
+        }
+    });
+
     function slugify(text) {
         const accentsMap = new Map([
             ['á','a'],['é','e'],['í','i'],['ó','o'],['ö','o'],['ő','o'],['ú','u'],['ü','u'],['ű','u'],
