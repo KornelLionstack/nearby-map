@@ -111,10 +111,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             .map(step => `<li>${step.instructions.replace(/<div.*?>|<\/div>/g,'')} - ${step.distance.text}</li>`)
                             .join('');
 
+                        const googleMapText =
+                            typeof cspm_nearby_map !== 'undefined'
+                                ? cspm_nearby_map.google_map_link_text
+                                : 'Open On Google Map';
+                        const gmapsLink =
+                            `https://www.google.com/maps/dir/?api=1&origin=${window.nearby_origins[mapId].lat()},${window.nearby_origins[mapId].lng()}&destination=${loc.lat},${loc.lng}`;
+
                         infoWindow.setContent(
                             `<strong>${loc.name}</strong><br>` +
                             `${leg.duration.text} (${leg.distance.text})` +
-                            `<ol>${steps}</ol>`
+                            `<ol>${steps}</ol>` +
+                            `<a href="${gmapsLink}" target="_blank" rel="noopener">${googleMapText}</a>`
                         );
                     } else {
                         infoWindow.setContent('Nincs elérhető útvonal');
