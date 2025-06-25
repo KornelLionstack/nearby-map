@@ -1182,7 +1182,7 @@ div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
 /* Style for the Google Maps link button in info windows */
 .cspm-gmaps-button {
         display: inline-block;
-        background: #008fed;
+        background: #302c2c;
         color: #fff !important;
         padding: 6px 12px;
         margin-top: 5px;
@@ -1191,7 +1191,7 @@ div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
 }
 
 .cspm-gmaps-button:hover {
-        background: #009bfd;
+        background: #262323;
         color: #fff !important;
 }
 
