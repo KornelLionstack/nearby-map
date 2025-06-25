@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (filtered.length === 0) {
                         console.warn(`Nincs találat a '${slug}' slug-hoz.`);
                     }
-                    showPlacesList(filtered, mapId, typeLabel, slug);
                     displayMarkersOnMap(filtered, mapId);
+                    showPlacesList(filtered, mapId, typeLabel, slug);
                 })
                 .catch(err => console.error('Helyek betöltésekor hiba történt:', err));
         });
@@ -143,7 +143,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             results.push(`${m.label}: ${el.duration.text} (${el.distance.text})`);
                         }
                         if (--pending === 0) {
-                            travelEl.innerHTML = results.join('<br>');
+                            const googleMapText =
+                                typeof cspm_nearby_map !== 'undefined'
+                                    ? cspm_nearby_map.google_map_link_text
+                                    : 'Megnyitás Google Térképen';
+                            const gmapsLink =
+                                `https://www.google.com/maps/dir/?api=1&origin=${window.nearby_origins[mapId].lat()},${window.nearby_origins[mapId].lng()}&destination=${loc.lat},${loc.lng}`;
+
+                            travelEl.innerHTML =
+                                results.join('<br>') +
+                                `<br><a href="${gmapsLink}" target="_blank" rel="noopener" class="cspm-gmaps-button">${googleMapText}</a>`;
                         }
                     });
                 });
