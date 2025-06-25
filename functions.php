@@ -70,6 +70,12 @@ function cspmnm_custom_marker_path( $default_url ) {
     return plugin_dir_url( __FILE__ ) . 'img/place_types_markers/';
 }
 
+// Use custom center marker icon
+add_filter( 'csnm_geoloc_marker_url', 'cspmnm_custom_geoloc_marker' );
+function cspmnm_custom_geoloc_marker( $default_url ) {
+    return 'https://revitalpark.hu/wp-content/uploads/2025/05/marker-custom.svg';
+}
+
 // Load Google Maps API asynchronously for better performance
 add_filter( 'script_loader_tag', 'cspmnm_defer_google_maps', 10, 2 );
 function cspmnm_defer_google_maps( $tag, $handle ) {
