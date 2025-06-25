@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (listContainer) listContainer.appendChild(item);
 
             item.addEventListener('click', () => {
+                document.querySelectorAll('.cspm_nearby_location_list_item')
+                    .forEach(el => el.classList.remove('active'));
+                item.classList.add('active');
                 displayMarkersOnMap([loc], mapId, true);
             });
 
