@@ -169,15 +169,17 @@ div[class^=cspm_place_distance_list] img{
 }
 
 .cspm_nearby_location_list_item{
-	padding:0px;
-	background:#fff;
-	-webkit-transition: background 0.3s linear;
-	-moz-transition: background 0.3s linear;
-	-ms-transition: background 0.3s linear;
-	-o-transition: background 0.3s linear;
-	transition: background 0.3s linear;
-	margin:0px;
-	border-bottom: 1px solid #EBEBEB;
+        padding:0px;
+        background:#fff;
+        -webkit-transition: background 0.3s linear;
+        -moz-transition: background 0.3s linear;
+        -ms-transition: background 0.3s linear;
+        -o-transition: background 0.3s linear;
+        transition: background 0.3s linear;
+        margin:0px;
+        border-bottom: 1px solid #EBEBEB;
+        display:flex;
+        align-items:flex-start;
 }
 
 .cspm_nearby_location_list_item:nth-of-type(odd) {
@@ -190,20 +192,20 @@ div[class^=cspm_place_distance_list] img{
 }
 
 .cspm_location_list_item_photo{
-	padding:0px;
-	background-size: cover !important;
-    height: 144px;
+        padding:0px;
+        background-size: cover !important;
+    height: 60px;
+    width: 60px;
     vertical-align: top;
-    width: 95px;
-    -webkit-flex: 0 0 80px;
-    -ms-flex: 0 0 80px;
-    flex: 0 0 80px;
-	cursor:pointer;
+    -webkit-flex: 0 0 60px;
+    -ms-flex: 0 0 60px;
+    flex: 0 0 60px;
+        cursor:pointer;
 }
 
 .cspm_location_list_item_details{
-	padding:15px;
-	width:71%;
+        padding:10px;
+        width:auto;
 }
 
 @media (max-width: 767px) {
@@ -1161,8 +1163,13 @@ div[class^=cspm_nearby_map_directions].small{
 div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps_container{
 	max-height:269px;	
 }
-div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
-	max-height:169px;	
+div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{ 
+        max-height:169px; 
+}
+
+.cspm_place_travel_info{ 
+        font-size:13px; 
+        margin-top:5px; 
 }
 	
 .cspm_route_distance{

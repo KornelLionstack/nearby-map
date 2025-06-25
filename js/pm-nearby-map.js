@@ -111,12 +111,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 `<div class="cspm_location_list_item_details">` +
                 `<span class="cspm_place_name_list">${loc.name}</span>` +
                 (loc.address ? `<span class="cspm_place_vicinity_list">${loc.address}</span>` : '') +
+                `<div class="cspm_place_travel_info"></div>` +
                 `</div>`;
             if (listContainer) listContainer.appendChild(item);
 
             item.addEventListener('click', () => {
                 displayMarkersOnMap([loc], mapId, true);
             });
+
+            const travelEl = item.querySelector('.cspm_place_travel_info');
+            if (travelEl) {
+                const distanceService = new google.maps.DistanceMatrixService();
+                const modes = [
+                    { mode: google.maps.TravelMode.DRIVING, label: 'Autóval' },
+                    { mode: google.maps.TravelMode.WALKING, label: 'Gyalog' },
+                    { mode: google.maps.TravelMode.BICYCLING, label: 'Kerékpárral' },
+                    { mode: google.maps.TravelMode.TRANSIT, label: 'Tömegközlekedéssel' }
+                ];
+                let pending = modes.length;
+                const results = [];
+
+                modes.forEach(m => {
+                    distanceService.getDistanceMatrix({
+                        origins: [window.nearby_origins[mapId]],
+                        destinations: [{ lat: loc.lat, lng: loc.lng }],
+                        travelMode: m.mode
+                    }, (response, status) => {
+                        if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+                            const el = response.rows[0].elements[0];
+                            results.push(`${m.label}: ${el.duration.text} (${el.distance.text})`);
+                        }
+                        if (--pending === 0) {
+                            travelEl.innerHTML = results.join('<br>');
+                        }
+                    });
+                });
+            }
         });
     }
 
