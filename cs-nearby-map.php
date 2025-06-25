@@ -1381,7 +1381,8 @@ if(!class_exists('CspmNearbyMap')){
 			/**
 			 * [@img_file_url] The images directory */
 			
-			$img_file_url = apply_filters('csnm_img_file', $this->plugin_url.'img/'); // @since 1.5
+                        $img_file_url = apply_filters('csnm_img_file', $this->plugin_url.'img/'); // @since 1.5
+                        $place_markers_file_url = apply_filters('csnm_place_markers_file', $img_file_url.'place_types_markers/');
 			 
 			$output = '<div id="cspm_nearby_map_'.$map_id.'" 
                 class="cspm-row cspm_nearby_map cspm_linear_gradient_bg" 
@@ -1489,7 +1490,7 @@ if(!class_exists('CspmNearbyMap')){
 										
 										$output .= '<div class="cspm_nearby_cat cspm_border_shadow cspm_border_radius">';
 										
-											$output .= '<img class="cspm_nearby_cat_img" src="'.$img_file_url.'nearby/'.$single_proximity.'.png" />';
+                                                                               $output .= '<img class="cspm_nearby_cat_img" src="'.$place_markers_file_url.$single_proximity.'.svg" />';
 											
 											$output .= '<span class="cspm_nearby_cat_name">'.$proximity_name.'</span>';
 										
