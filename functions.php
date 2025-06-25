@@ -76,6 +76,26 @@ function cspmnm_custom_geoloc_marker( $default_url ) {
     return 'https://revitalpark.hu/wp-content/uploads/2025/05/marker-custom.svg';
 }
 
+/**
+ * Map sanitized type slugs to icon filenames used by the plugin.
+ *
+ * Some icons have slightly different file names than the slugs
+ * generated from the place type labels. This helper converts the
+ * slug to the appropriate icon file name (without extension).
+ *
+ * @param string $slug Sanitized slug.
+ * @return string File name (without extension).
+ */
+function cspmnm_icon_filename( $slug ) {
+    $map = array(
+        'kozlekedes'        => 'kozlekedés',
+        'ettermek'          => 'ttermek',
+        'ejszakai_elet_klub' => 'ejszakai_elet',
+    );
+
+    return isset( $map[ $slug ] ) ? $map[ $slug ] : $slug;
+}
+
 // Load Google Maps API asynchronously for better performance
 add_filter( 'script_loader_tag', 'cspmnm_defer_google_maps', 10, 2 );
 function cspmnm_defer_google_maps( $tag, $handle ) {

@@ -82,6 +82,16 @@ document.addEventListener('DOMContentLoaded', function () {
         return slug.replace(/[\s\-]+/g, '_').replace(/[^a-z0-9_]/g, '').trim();
     }
 
+    const iconSlugMap = {
+        'kozlekedes': 'kozlekedés',
+        'ettermek': 'ttermek',
+        'ejszakai_elet_klub': 'ejszakai_elet'
+    };
+
+    function iconFile(slug) {
+        return iconSlugMap[slug] || slug;
+    }
+
     function showPlacesList(locations, mapId, label, slug) {
         const wrapper = document.getElementById('cspm_nearby_places_list_' + mapId);
         if (!wrapper) return;
@@ -90,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const markerBase = typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url ? cspm_nearby_map.place_markers_file_url : '';
         const listIconBase = markerBase;
         const headerImg = wrapper.querySelector('.cspm_nearby_cat_list_img');
-        if (headerImg) headerImg.src = listIconBase + slug + '.svg';
+        if (headerImg) headerImg.src = listIconBase + iconFile(slug) + '.svg';
         const headerName = wrapper.querySelector('.cspm_nearby_cat_list_name');
         if (headerName) headerName.textContent = label;
         const countEl = wrapper.querySelector('.cspm_nbr_places_found');
@@ -209,9 +219,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const markers = [];
         locations.forEach(loc => {
+            const iconSlug = slugify(loc.type);
             const icon = markerBase
                 ? {
-                    url: markerBase + slugify(loc.type) + '.svg',
+                    url: markerBase + iconFile(iconSlug) + '.svg',
                     scaledSize: new google.maps.Size(40, 40)
                 }
                 : null;
