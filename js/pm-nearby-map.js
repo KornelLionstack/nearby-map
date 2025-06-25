@@ -67,12 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
         window.nearby_map_object[mapId] = map;
         window.nearby_origins[mapId] = new google.maps.LatLng(lat, lng);
 
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer({
-            suppressMarkers: true
-        });
-        directionsRenderer.setMap(map);
-
         const infoWindow = new google.maps.InfoWindow();
 
         const markerBase =
@@ -95,39 +89,46 @@ document.addEventListener('DOMContentLoaded', function () {
                 ...(icon ? { icon } : {})
             });
 
-            marker.addListener('click', () => {
-                directionsRenderer.setMap(map);
-                directionsRenderer.set('directions', null);
+            marker.addListener('mouseover', () => {
+                const distanceService = new google.maps.DistanceMatrixService();
+                const modes = [
+                    { mode: google.maps.TravelMode.DRIVING, label: 'Autóval' },
+                    { mode: google.maps.TravelMode.WALKING, label: 'Gyalog' },
+                    { mode: google.maps.TravelMode.BICYCLING, label: 'Kerékpárral' },
+                    { mode: google.maps.TravelMode.TRANSIT, label: 'Tömegközlekedéssel' }
+                ];
 
-                directionsService.route({
-                    origin: window.nearby_origins[mapId],
-                    destination: { lat: loc.lat, lng: loc.lng },
-                    travelMode: google.maps.TravelMode.DRIVING
-                }, (result, status) => {
-                    if (status === 'OK') {
-                        directionsRenderer.setDirections(result);
-                        const leg = result.routes[0].legs[0];
-                        const steps = leg.steps
-                            .map(step => `<li>${step.instructions.replace(/<div.*?>|<\/div>/g,'')} - ${step.distance.text}</li>`)
-                            .join('');
+                const results = [];
+                let pending = modes.length;
 
-                        const googleMapText =
-                            typeof cspm_nearby_map !== 'undefined'
-                                ? cspm_nearby_map.google_map_link_text
-                                : 'Open On Google Map';
-                        const gmapsLink =
-                            `https://www.google.com/maps/dir/?api=1&origin=${window.nearby_origins[mapId].lat()},${window.nearby_origins[mapId].lng()}&destination=${loc.lat},${loc.lng}`;
+                modes.forEach(m => {
+                    distanceService.getDistanceMatrix({
+                        origins: [window.nearby_origins[mapId]],
+                        destinations: [{ lat: loc.lat, lng: loc.lng }],
+                        travelMode: m.mode
+                    }, (response, status) => {
+                        if (status === 'OK' &&
+                            response.rows[0].elements[0].status === 'OK') {
+                            const element = response.rows[0].elements[0];
+                            results.push(`${m.label}: ${element.duration.text} (${element.distance.text})`);
+                        }
+                        pending--;
+                        if (pending === 0) {
+                            const googleMapText =
+                                typeof cspm_nearby_map !== 'undefined'
+                                    ? cspm_nearby_map.google_map_link_text
+                                    : 'Megnyitás Google Térképen';
+                            const gmapsLink =
+                                `https://www.google.com/maps/dir/?api=1&origin=${window.nearby_origins[mapId].lat()},${window.nearby_origins[mapId].lng()}&destination=${loc.lat},${loc.lng}`;
 
-                        infoWindow.setContent(
-                            `<strong>${loc.name}</strong><br>` +
-                            `${leg.duration.text} (${leg.distance.text})` +
-                            `<ol>${steps}</ol>` +
-                            `<a href="${gmapsLink}" target="_blank" rel="noopener">${googleMapText}</a>`
-                        );
-                    } else {
-                        infoWindow.setContent('Nincs elérhető útvonal');
-                    }
-                    infoWindow.open(map, marker);
+                            infoWindow.setContent(
+                                `<strong>${loc.name}</strong><br>` +
+                                results.join('<br>') +
+                                `<br><a href="${gmapsLink}" target="_blank" rel="noopener" class="cspm-gmaps-button">${googleMapText}</a>`
+                            );
+                            infoWindow.open(map, marker);
+                        }
+                    });
                 });
             });
         });

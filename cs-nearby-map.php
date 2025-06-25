@@ -395,7 +395,7 @@ if(!class_exists('CspmNearbyMap')){
 				'the_word_reviews' => esc_html__('Reviews', 'cs_nearby_map'),
 				'the_word_photos' => esc_html__('Photos', 'cs_nearby_map'),
 				'the_word_route' => esc_html__('Route', 'cs_nearby_map'),
-				'google_map_link_text' => esc_html__('Open On Google Map', 'cs_nearby_map'),
+                                'google_map_link_text' => esc_html__('Megnyitás Google Térképen', 'cs_nearby_map'),
 				'appears_also_text' => esc_html__('Appears also in: ', 'cs_nearby_map'),
 				'more_reviews_text' => esc_html__('Read more reviews', 'cs_nearby_map'),
 				'show_more_text' => esc_html__('Show more', 'cs_nearby_map'),
