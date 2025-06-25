@@ -75,6 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const infoWindow = new google.maps.InfoWindow();
 
+        // Clear route and info window when clicking elsewhere on the map
+        map.addListener('click', () => {
+            directionsRenderer.set('directions', null);
+            infoWindow.close();
+        });
+
         const markerBase =
             typeof cspm_nearby_map !== 'undefined' &&
             cspm_nearby_map.place_markers_file_url
