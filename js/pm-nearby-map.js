@@ -88,8 +88,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         wrapper.style.display = 'block';
         const imgBase = typeof cspm_nearby_map !== 'undefined' ? cspm_nearby_map.img_file_url : '';
+        const listIconBase = imgBase + 'nearby/';
         const headerImg = wrapper.querySelector('.cspm_nearby_cat_list_img');
-        if (headerImg) headerImg.src = imgBase + 'nearby/' + slug + '.png';
+        if (headerImg) headerImg.src = listIconBase + slug + '.png';
         const headerName = wrapper.querySelector('.cspm_nearby_cat_list_name');
         if (headerName) headerName.textContent = label;
         const countEl = wrapper.querySelector('.cspm_nbr_places_found');
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
         locations.forEach(loc => {
             const item = document.createElement('div');
             item.className = 'cspm_nearby_location_list_item';
-            const iconUrl = markerBase + slugify(loc.type) + '.svg';
+            const iconUrl = listIconBase + slugify(loc.type) + '.png';
             item.innerHTML =
                 `<div class="cspm_location_list_item_photo" style="background-image:url('${iconUrl}')"></div>` +
                 `<div class="cspm_location_list_item_details">` +
