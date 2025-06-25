@@ -1490,7 +1490,7 @@ if(!class_exists('CspmNearbyMap')){
 										
 										$output .= '<div class="cspm_nearby_cat cspm_border_shadow cspm_border_radius">';
 										
-                                                                               $output .= '<img class="cspm_nearby_cat_img" src="'.$place_markers_file_url.$single_proximity.'.svg" />';
+                                                                               $output .= '<img class="cspm_nearby_cat_img" src="'.$place_markers_file_url.cspmnm_icon_filename($single_proximity).'.svg" />';
 											
 											$output .= '<span class="cspm_nearby_cat_name">'.$proximity_name.'</span>';
 										
