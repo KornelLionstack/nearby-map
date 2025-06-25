@@ -12,6 +12,7 @@ window.nearby_origins = window.nearby_origins || {};
 document.addEventListener('DOMContentLoaded', function () {
     // Find all proximity buttons regardless of the map id
     const buttons = document.querySelectorAll('[class*="proximity_place_"]');
+    const backButtons = document.querySelectorAll('.cspm_back_to_nearby_cats');
 
     const ajaxUrl = typeof ajaxurl !== 'undefined'
         ? ajaxurl
@@ -32,9 +33,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (filtered.length === 0) {
                         console.warn(`Nincs találat a '${slug}' slug-hoz.`);
                     }
+                    showPlacesList(filtered, mapId, typeLabel, slug);
                     displayMarkersOnMap(filtered, mapId);
                 })
                 .catch(err => console.error('Helyek betöltésekor hiba történt:', err));
+        });
+    });
+
+    backButtons.forEach(btn => {
+        btn.addEventListener('click', function(){
+            const mapId = this.dataset.mapId;
+            const list = document.getElementById('cspm_nearby_places_list_' + mapId);
+            if(list) list.style.display = 'none';
+            document.querySelectorAll('.proximity_place_' + mapId).forEach(el => el.style.display = 'inline-block');
+            displayMarkersOnMap([], mapId);
         });
     });
 
@@ -70,7 +82,45 @@ document.addEventListener('DOMContentLoaded', function () {
         return slug.replace(/[\s\-]+/g, '_').replace(/[^a-z0-9_]/g, '').trim();
     }
 
-    function displayMarkersOnMap(locations, mapId) {
+    function showPlacesList(locations, mapId, label, slug) {
+        const wrapper = document.getElementById('cspm_nearby_places_list_' + mapId);
+        if (!wrapper) return;
+
+        wrapper.style.display = 'block';
+        const imgBase = typeof cspm_nearby_map !== 'undefined' ? cspm_nearby_map.img_file_url : '';
+        const headerImg = wrapper.querySelector('.cspm_nearby_cat_list_img');
+        if (headerImg) headerImg.src = imgBase + 'nearby/' + slug + '.png';
+        const headerName = wrapper.querySelector('.cspm_nearby_cat_list_name');
+        if (headerName) headerName.textContent = label;
+        const countEl = wrapper.querySelector('.cspm_nbr_places_found');
+        if (countEl) countEl.textContent = locations.length;
+
+        const listContainer = wrapper.querySelector('.cspm_nearby_location_list_items_container_' + mapId);
+        if (listContainer) listContainer.innerHTML = '';
+
+        document.querySelectorAll('.proximity_place_' + mapId).forEach(el => el.style.display = 'none');
+
+        const markerBase = typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url ? cspm_nearby_map.place_markers_file_url : '';
+
+        locations.forEach(loc => {
+            const item = document.createElement('div');
+            item.className = 'cspm_nearby_location_list_item';
+            const iconUrl = markerBase + slugify(loc.type) + '.svg';
+            item.innerHTML =
+                `<div class="cspm_location_list_item_photo" style="background-image:url('${iconUrl}')"></div>` +
+                `<div class="cspm_location_list_item_details">` +
+                `<span class="cspm_place_name_list">${loc.name}</span>` +
+                (loc.address ? `<span class="cspm_place_vicinity_list">${loc.address}</span>` : '') +
+                `</div>`;
+            if (listContainer) listContainer.appendChild(item);
+
+            item.addEventListener('click', () => {
+                displayMarkersOnMap([loc], mapId, true);
+            });
+        });
+    }
+
+    function displayMarkersOnMap(locations, mapId, openFirst = false) {
         const elementId = 'codespacing_progress_map_' + mapId;
         const mapElement = document.getElementById(elementId);
         if (!mapElement) return console.error(`Nem található a térkép elem: ${elementId}`);
@@ -98,6 +148,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const infoWindow = new google.maps.InfoWindow();
 
+        // draw origin marker each time
+        const originMarkerOpts = { position: { lat, lng }, map: map };
+        if (typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.geoloc_marker_url) {
+            originMarkerOpts.icon = { url: cspm_nearby_map.geoloc_marker_url, scaledSize: new google.maps.Size(40,40) };
+        }
+        new google.maps.Marker(originMarkerOpts);
+
         // Clear route and info window when clicking elsewhere on the map
         map.addListener('click', () => {
             directionsRenderer.set('directions', null);
@@ -110,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? cspm_nearby_map.place_markers_file_url
                 : '';
 
+        const markers = [];
         locations.forEach(loc => {
             const icon = markerBase
                 ? {
@@ -123,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: loc.name,
                 ...(icon ? { icon } : {})
             });
+            markers.push(marker);
 
             marker.addListener('click', () => {
                 directionsRenderer.setMap(map);
@@ -180,5 +239,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
         });
+
+        if (openFirst && markers.length > 0) {
+            google.maps.event.addListenerOnce(map, 'idle', () => {
+                google.maps.event.trigger(markers[0], 'click');
+            });
+        }
+
+        return { map, markers };
     }
 });
