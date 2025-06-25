@@ -1169,5 +1169,21 @@ div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
 }
 
 .cspm_maneuver_icon{
-	margin-right:5px;
+        margin-right:5px;
+}
+
+/* Style for the Google Maps link button in info windows */
+.cspm-gmaps-button {
+        display: inline-block;
+        background: #008fed;
+        color: #fff !important;
+        padding: 6px 12px;
+        margin-top: 5px;
+        border-radius: 4px;
+        transition: background 0.2s linear;
+}
+
+.cspm-gmaps-button:hover {
+        background: #009bfd;
+        color: #fff !important;
 }
