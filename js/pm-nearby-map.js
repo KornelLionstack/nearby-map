@@ -87,10 +87,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!wrapper) return;
 
         wrapper.style.display = 'block';
-        const imgBase = typeof cspm_nearby_map !== 'undefined' ? cspm_nearby_map.img_file_url : '';
-        const listIconBase = imgBase + 'nearby/';
+        const markerBase = typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url ? cspm_nearby_map.place_markers_file_url : '';
+        const listIconBase = markerBase;
         const headerImg = wrapper.querySelector('.cspm_nearby_cat_list_img');
-        if (headerImg) headerImg.src = listIconBase + slug + '.png';
+        if (headerImg) headerImg.src = listIconBase + slug + '.svg';
         const headerName = wrapper.querySelector('.cspm_nearby_cat_list_name');
         if (headerName) headerName.textContent = label;
         const countEl = wrapper.querySelector('.cspm_nbr_places_found');
@@ -101,14 +101,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.querySelectorAll('.proximity_place_' + mapId).forEach(el => el.style.display = 'none');
 
-        const markerBase = typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url ? cspm_nearby_map.place_markers_file_url : '';
 
         locations.forEach(loc => {
             const item = document.createElement('div');
             item.className = 'cspm_nearby_location_list_item';
-            const iconUrl = listIconBase + slugify(loc.type) + '.png';
             item.innerHTML =
-                `<div class="cspm_location_list_item_photo" style="background-image:url('${iconUrl}')"></div>` +
                 `<div class="cspm_location_list_item_details">` +
                 `<span class="cspm_place_name_list">${loc.name}</span>` +
                 (loc.address ? `<span class="cspm_place_vicinity_list">${loc.address}</span>` : '') +

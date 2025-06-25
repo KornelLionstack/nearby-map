@@ -1194,3 +1194,22 @@ div[class^=cspm_nearby_map_directions].small div.cspm_direction_steps{
         background: #009bfd;
         color: #fff !important;
 }
+
+/* Show category name on hover next to icon */
+.cspm_nearby_cat {
+        display: flex;
+        align-items: center;
+}
+
+.cspm_nearby_cat_img {
+        margin: 0;
+}
+
+.cspm_nearby_cat_name {
+        display: none;
+        margin-left: 10px;
+}
+
+.cspm_nearby_cat:hover .cspm_nearby_cat_name {
+        display: inline-block;
+}
