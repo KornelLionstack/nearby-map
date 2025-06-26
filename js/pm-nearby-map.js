@@ -98,9 +98,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         wrapper.style.display = 'block';
         const markerBase = typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.place_markers_file_url ? cspm_nearby_map.place_markers_file_url : '';
-        const listIconBase = markerBase;
+        const listIconBase =
+            typeof cspm_nearby_map !== 'undefined' && cspm_nearby_map.nearby_icons_file_url
+                ? cspm_nearby_map.nearby_icons_file_url
+                : markerBase;
         const headerImg = wrapper.querySelector('.cspm_nearby_cat_list_img');
-        if (headerImg) headerImg.src = listIconBase + iconFile(slug) + '.svg';
+        if (headerImg) headerImg.src = listIconBase + iconFile(slug) + '.png';
         const headerName = wrapper.querySelector('.cspm_nearby_cat_list_name');
         if (headerName) headerName.textContent = label;
         const countEl = wrapper.querySelector('.cspm_nbr_places_found');
