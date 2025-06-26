@@ -380,14 +380,16 @@ if(!class_exists('CspmNearbyMap')){
 		 */		 
 		function cspm_enqueue_scripts(){
 			
-			$img_file_url = apply_filters('csnm_img_file', $this->plugin_url.'img/');
-			$place_markers_file_url = apply_filters('csnm_place_markers_file', $img_file_url.'place_types_markers/');
+                        $img_file_url = apply_filters('csnm_img_file', $this->plugin_url.'img/');
+                        $place_markers_file_url = apply_filters('csnm_place_markers_file', $img_file_url.'place_types_markers/');
+                        $nearby_icons_file_url = apply_filters('csnm_nearby_icons_file', $img_file_url.'nearby/');
 			
 			$wp_localize_script_args = array(
 				'ajax_url' => esc_url(home_url()) . '/wp-admin/admin-ajax.php',
 				'plugin_url'  => $this->plugin_url,
-				'img_file_url'  => $img_file_url,
-				'place_markers_file_url'  => $place_markers_file_url,
+                                'img_file_url'  => $img_file_url,
+                                'place_markers_file_url'  => $place_markers_file_url,
+                                'nearby_icons_file_url'   => $nearby_icons_file_url,
 				'geoloc_marker_url'  => apply_filters('csnm_geoloc_marker_url', $img_file_url.'marker.png'), //@since 3.2
 				'get_directions' => esc_html__('Directions', 'cs_nearby_map'),
 				'no_results_msg' => esc_html__('We couldn\'t find any result!', 'cs_nearby_map'),
@@ -1383,6 +1385,7 @@ if(!class_exists('CspmNearbyMap')){
 			
                         $img_file_url = apply_filters('csnm_img_file', $this->plugin_url.'img/'); // @since 1.5
                         $place_markers_file_url = apply_filters('csnm_place_markers_file', $img_file_url.'place_types_markers/');
+                        $nearby_icons_file_url = apply_filters('csnm_nearby_icons_file', $img_file_url.'nearby/');
 			 
 			$output = '<div id="cspm_nearby_map_'.$map_id.'" 
                 class="cspm-row cspm_nearby_map cspm_linear_gradient_bg" 
@@ -1490,7 +1493,7 @@ if(!class_exists('CspmNearbyMap')){
 										
 										$output .= '<div class="cspm_nearby_cat cspm_border_shadow cspm_border_radius">';
 										
-                                                                               $output .= '<img class="cspm_nearby_cat_img" src="'.$place_markers_file_url.cspmnm_icon_filename($single_proximity).'.svg" />';
+                                                                               $output .= '<img class="cspm_nearby_cat_img" src="'.$nearby_icons_file_url.cspmnm_icon_filename($single_proximity).'.png" />';
 											
 											$output .= '<span class="cspm_nearby_cat_name">'.$proximity_name.'</span>';
 										
